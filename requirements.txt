@@ -3,3 +3,4 @@ openai
 Flask-Session
 python-dotenv
 gunicorn
+flask-cors
