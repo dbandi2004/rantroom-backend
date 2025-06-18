@@ -9,11 +9,13 @@ app.secret_key = "rantroom-secret"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-# ✅ CORS fix: allow Firebase frontend
-CORS(app, origins=["https://rantroom-af654.web.app"])
+# CORS fix: allow requests from your Firebase frontend
+CORS(app, origins=["https://rantroom-af654.web.app"], methods=["GET", "POST", "OPTIONS"], supports_credentials=True)
 
+# OpenAI key from environment
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+# Persona prompt
 AI_PERSONA = (
     "You're a grounded, emotionally supportive best friend in a text convo. "
     "You talk like a real 21-year-old who cares — casually but sincerely. "
@@ -28,8 +30,8 @@ AI_PERSONA = (
 def index():
     return jsonify({"message": "RantRoom backend is live 🎉"}), 200
 
-@app.route("/", methods=["POST"])
-def chat():
+@app.route("/ask", methods=["POST"])
+def ask():
     if "history" not in session:
         session["history"] = [
             {"role": "system", "content": AI_PERSONA},
