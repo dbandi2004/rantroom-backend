@@ -8,7 +8,9 @@ app = Flask(__name__)
 app.secret_key = "rantroom-secret"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
-CORS(app)
+
+# ✅ CORS fix: allow Firebase frontend
+CORS(app, origins=["https://rantroom-af654.web.app"])
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
