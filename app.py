@@ -52,7 +52,8 @@ def chat():
     if not user_msg:
         return jsonify({"reply": "Say something first 😅"}), 400
 
-    prompt = personas.get(persona_key, personas["chill"])
+    prompt = PERSONAS.get(persona_key, PERSONAS["chill"])
+
 
     # Reset session on persona change
     if "persona" not in session or session["persona"] != persona_key:
