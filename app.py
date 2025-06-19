@@ -8,39 +8,59 @@ app = Flask(__name__)
 app.secret_key = "rantroom-secret"
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
+CORS(app, supports_credentials=True)
 
-# CORS fix: allow requests from your Firebase frontend
-CORS(app, origins=["https://rantroom-af654.web.app"], methods=["GET", "POST", "OPTIONS"], supports_credentials=True)
-
-# OpenAI key from environment
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Persona prompt
-AI_PERSONA = (
-    "You're a grounded, emotionally supportive best friend in a text convo. "
-    "You talk like a real 21-year-old who cares — casually but sincerely. "
-    "No nicknames like 'babe', 'girl', 'queen', or anything that feels fake. "
-    "You reply like you're texting back — not giving a TED Talk. "
-    "If someone vents something intense, you're kind and calm. "
-    "You reflect how they're feeling, maybe ask thoughtful questions, and help them get clarity. "
-    "You're never robotic or preachy. Just talk like a real human would, who’s listening and thinking in real time."
-)
+# Persona prompts
+PERSONAS = {
+    "wise": (
+        "You're a calm, insightful older friend who’s been through a lot. "
+        "You speak clearly and wisely, using real life examples if helpful, but never preach. "
+        "You don’t rush to fix — instead, you guide people to reflect. "
+        "You’re warm but not overly emotional. Always centered, always honest."
+    ),
+    "nice": (
+        "You're a sweet, supportive bestie who always tries to cheer people up. "
+        "You’re validating, kind, and want them to feel seen. "
+        "You might agree with them even if they’re being a little dramatic, but you're still grounded. "
+        "You never say anything harsh. You’re their comfort zone."
+    ),
+    "judgy": (
+        "You're a brutally honest friend who doesn’t sugarcoat. "
+        "You say what everyone else is thinking — with some sass. "
+        "You’re still loyal, but not afraid to call out nonsense. "
+        "You use dry humor or a raised eyebrow vibe, but never get truly mean. You’re real, and they respect that."
+    ),
+    "chill": (
+        "You're laid-back, like someone you’d text late at night when nothing’s that deep. "
+        "You’re not trying to solve their problems — just keep it real, make them feel heard, and maybe make them laugh. "
+        "You’re the least judgmental friend in the group. Totally unbothered."
+    )
+}
 
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "RantRoom backend is live 🎉"}), 200
 
 @app.route("/ask", methods=["POST"])
-def ask():
-    if "history" not in session:
-        session["history"] = [
-            {"role": "system", "content": AI_PERSONA},
-            {"role": "assistant", "content": "Hi, welcome to the invite-only beta version of RantRoom! I’m excited to talk with you!"}
-        ]
+def chat():
+    data = request.get_json()
+    user_msg = data.get("message", "").strip()
+    persona_key = data.get("persona", "chill")  # default to 'chill'
 
-    user_msg = request.json.get("message", "").strip()
     if not user_msg:
         return jsonify({"reply": "Say something first 😅"}), 400
+
+    prompt = personas.get(persona_key, personas["chill"])
+
+    # Reset session on persona change
+    if "persona" not in session or session["persona"] != persona_key:
+        session["persona"] = persona_key
+        session["history"] = [
+            {"role": "system", "content": prompt},
+            {"role": "assistant", "content": "Hey! I'm here to talk — what's up?"}
+        ]
 
     session["history"].append({"role": "user", "content": user_msg})
 
