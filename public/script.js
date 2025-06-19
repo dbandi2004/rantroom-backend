@@ -2,6 +2,17 @@ const chatBox = document.getElementById("chat-box");
 const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 
+let currentPersona = "chill"; // default persona
+
+// Handle persona selection
+document.querySelectorAll(".persona-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".persona-btn").forEach(b => b.classList.remove("selected"));
+    btn.classList.add("selected");
+    currentPersona = btn.dataset.persona;
+  });
+});
+
 function addMessage(role, text) {
   const row = document.createElement("div");
   row.className = "bubble-row " + role;
@@ -39,7 +50,7 @@ form.addEventListener("submit", async (e) => {
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ message })
+      body: JSON.stringify({ message, persona: currentPersona })
     });
 
     const data = await res.json();

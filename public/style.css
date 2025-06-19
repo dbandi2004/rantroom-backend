@@ -38,6 +38,45 @@ body {
   border-radius: 12px;
 }
 
+/* 👤 Persona Selector */
+.persona-selector {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.persona-btn {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.85rem;
+  border-radius: 999px;
+  border: 2px solid #f88379;
+  background: white;
+  color: #f88379;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.persona-btn.selected {
+  background: #f88379;
+  color: white;
+}
+
+body.dark .persona-btn {
+  background: transparent;
+  border-color: #ff7675;
+  color: #ff7675;
+}
+
+body.dark .persona-btn.selected {
+  background: #ff7675;
+  color: white;
+}
+
 .chat-box {
   flex: 1;
   overflow-y: auto;
@@ -81,8 +120,8 @@ body {
 }
 
 .bubble.ai {
-  background-color: #f5e8f7;   /* light lilac bubble */
-  color: #3e2f41;              /* soft plum text */
+  background-color: #f5e8f7;
+  color: #3e2f41;
   border-bottom-left-radius: 0.3rem;
 }
 

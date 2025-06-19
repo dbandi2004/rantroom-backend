@@ -4,25 +4,34 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RantRoom 💬</title>
-  <link rel="stylesheet" href="style.css?v=10" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="toggle-container">
-    <label class="switch">
+  <div class="chat-wrapper fade-in">
+    <img src="logo.png" alt="RantRoom Logo" class="logo" />
+    
+    <!-- Persona selector -->
+    <div class="persona-selector">
+      <button class="persona-tab active" data-persona="wise">🎓 Wise</button>
+      <button class="persona-tab" data-persona="nice">💖 Nice</button>
+      <button class="persona-tab" data-persona="judgy">👀 Judgy</button>
+      <button class="persona-tab" data-persona="chill">🤖 Chill</button>
+    </div>
+
+    <div id="chat-box" class="chat-box"></div>
+    
+    <form id="chat-form">
+      <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+
+    <!-- Dark mode toggle -->
+    <label class="toggle">
       <input type="checkbox" id="toggle-dark" />
       <span class="slider"></span>
     </label>
   </div>
 
-  <div class="app">
-    <img src="logo.png" alt="RantRoom Logo" class="logo" />
-    <div class="chat-box" id="chat-box"></div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Message..." autocomplete="off" required />
-      <button type="submit">Send</button>
-    </form>
-  </div>
-
-  <script src="script.js?v=10"></script>
+  <script src="script.js?v=11"></script>
 </body>
 </html>
