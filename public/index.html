@@ -4,34 +4,78 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RantRoom 💬</title>
-  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=1.6" />
 </head>
 <body>
-  <div class="chat-wrapper fade-in">
-    <img src="logo.png" alt="RantRoom Logo" class="logo" />
-    
-    <!-- Persona selector -->
-    <div class="persona-selector">
-      <button class="persona-tab active" data-persona="wise">🎓 Wise</button>
-      <button class="persona-tab" data-persona="nice">💖 Nice</button>
-      <button class="persona-tab" data-persona="judgy">👀 Judgy</button>
-      <button class="persona-tab" data-persona="chill">🤖 Chill</button>
-    </div>
 
-    <div id="chat-box" class="chat-box"></div>
-    
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Type your message..." autocomplete="off" required />
-      <button type="submit">Send</button>
-    </form>
-
-    <!-- Dark mode toggle -->
-    <label class="toggle">
-      <input type="checkbox" id="toggle-dark" />
-      <span class="slider"></span>
+  <!-- Welcome Screen -->
+  <div id="welcome-screen" class="welcome-screen">
+    <h1><strong>Hey!</strong> I'm <span>RantRoom</span></h1>
+    <p>our conversations are private & anonymous — no login needed. just choose a nickname and you're good to go.</p>
+    <input type="text" id="nickname" placeholder="say anything..." />
+    <label class="checkbox-container">
+      <input type="checkbox" id="consent-checkbox">
+      by continuing, I confirm I'm 13+ and accept the 
+      <a href="#">terms</a> & <a href="#">privacy policy</a>.
     </label>
+    <button id="start-btn" disabled>next</button>
   </div>
 
-  <script src="script.js?v=11"></script>
+  <!-- Age Screen -->
+  <div id="age-screen" class="age-screen" style="display: none;">
+    <h2><span id="nickname-display"></span>, how old are you?</h2>
+    <p class="sub">we ask for your age so we can personalize your vibe</p>
+    <div class="age-options">
+      <button class="age-box age1" data-age="13-17">13–17 years old</button>
+      <button class="age-box age2" data-age="18-24">18–24 years old</button>
+      <button class="age-box age3" data-age="25-34">25–34 years old</button>
+      <button class="age-box age4" data-age="35+">35+ years old</button>
+    </div>
+    <button id="age-next-btn" disabled class="age-next">keep going</button>
+  </div>
+
+  <!-- Main App (Home Tab) -->
+  <div class="app" id="app" style="display: none;">
+    <img src="logo.png" alt="RantRoom Logo" class="logo" />
+    <div class="persona-tabs">
+      <button class="active" data-persona="wise">🎓 wise</button>
+      <button data-persona="nice">💖 nice</button>
+      <button data-persona="judgy">👀 judgy</button>
+      <button data-persona="chill">🤖 chill</button>
+    </div>
+    <div class="persona-sliders">
+      <label><input type="checkbox" value="wise" checked> wise</label>
+      <label><input type="checkbox" value="nice" checked> nice</label>
+      <label><input type="checkbox" value="judgy" checked> judgy</label>
+      <label><input type="checkbox" value="chill" checked> chill</label>
+    </div>
+    <div id="chat-box" class="chat-box"></div>
+    <form id="chat-form" class="initial-input">
+      <input type="text" id="user-input" placeholder="say anything..." autocomplete="off" required />
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <!-- Tab Views -->
+  <div id="tab-discover" class="tab-content" style="display: none;">
+    <div class="coming-soon">🧭 discover is coming soon!</div>
+  </div>
+  <div id="tab-room" class="tab-content" style="display: none;">
+    <div class="coming-soon">🛏 your rant room is coming soon!</div>
+  </div>
+  <div id="tab-profile" class="tab-content" style="display: none;">
+    <div class="coming-soon">👤 profile is coming soon!</div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tab-bar" style="display: none;">
+    <button data-tab="discover">🧭 discover</button>
+    <button class="active" data-tab="home">🏠 home</button>
+    <button data-tab="room">🛏 room</button>
+    <button data-tab="profile">👤 profile</button>
+  </div>
+
+  <script src="script.js?v=1.6"></script>
 </body>
 </html>

@@ -1,80 +1,221 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Nunito:wght@400;600&display=swap');
 
 body {
-  font-family: 'Inter', sans-serif;
-  background: radial-gradient(circle at top left, #f88379 0%, #fff2f5 40%, #f3e8ff 100%);
+  font-family: 'Nunito', sans-serif;
+  background: linear-gradient(135deg, #ffe0e5 0%, #fef5f9 40%, #f4eaff 100%);
   min-height: 100vh;
   margin: 0;
   padding: 0;
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
+  flex-direction: column;
+  align-items: center;
   transition: background 0.4s ease, color 0.3s ease;
 }
 
-.app {
+/* Welcome Screen */
+.welcome-screen {
+  text-align: center;
+  margin: 6rem auto 2rem;
   width: 100%;
-  max-width: 480px;
-  background: rgba(255, 230, 225, 0.6);
-  box-shadow: 0 12px 40px rgba(248, 131, 121, 0.25);
-  border-radius: 32px;
-  margin: 2rem;
-  padding: 2rem 1.25rem;
+  max-width: 460px;
+  padding: 0 1rem;
+}
+
+.welcome-screen h1 {
+  font-size: 1.8rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.welcome-screen h1 span {
+  color: #F87070;
+  font-weight: 700;
+}
+
+.welcome-screen p {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.welcome-screen input[type="text"] {
+  width: 80%;
+  max-width: 360px;
+  padding: 0.9rem 1.2rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 999px;
+  background: #f5f5f5;
+  box-shadow: inset 0 0 0 1.5px #ddd;
+  margin-bottom: 1rem;
+}
+
+.welcome-screen input[type="text"]:focus {
+  outline: none;
+  box-shadow: inset 0 0 0 2px #F87070;
+}
+
+.checkbox-container {
+  font-size: 0.85rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+  display: block;
+  text-align: left;
+  max-width: 360px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.checkbox-container a {
+  color: #555;
+  text-decoration: underline;
+}
+
+.welcome-screen button {
+  width: 80%;
+  max-width: 360px;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  color: white;
+  background-color: #F87070;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.welcome-screen button:disabled {
+  background-color: #fbb7af;
+  cursor: not-allowed;
+}
+
+/* Age Screen */
+.age-screen {
+  text-align: center;
+  margin: 4rem auto 2rem;
+  width: 100%;
+  max-width: 460px;
+  padding: 0 1.2rem;
+}
+
+.age-screen h2 {
+  font-size: 1.6rem;
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 700;
+  color: #F87070;
+  margin-bottom: 0.5rem;
+}
+
+.age-screen .sub {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 2rem;
+}
+
+.age-options {
   display: flex;
   flex-direction: column;
-  position: relative;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  transition: background 0.4s ease;
-  opacity: 0;
-  transform: translateY(20px);
-  animation: loadFadeIn 0.5s ease-out forwards;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  align-items: center;
 }
+
+.age-box {
+  padding: 0.85rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 999px;
+  width: 80%;
+  max-width: 360px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.age1 { background-color: #ffe6e3; color: #c9493e; }
+.age2 { background-color: #fce3fa; color: #b241a9; }
+.age3 { background-color: #e6f4ff; color: #3a6ea5; }
+.age4 { background-color: #fff0e5; color: #9e5832; }
+
+.age-box:hover {
+  transform: scale(1.02);
+  opacity: 0.95;
+}
+
+.age-box.selected {
+  outline: 3px solid #F87070;
+}
+
+.age-next {
+  width: 80%;
+  max-width: 360px;
+  padding: 0.9rem;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  background-color: #F87070;
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.age-next:disabled {
+  background-color: #fbb7af;
+  cursor: not-allowed;
+}
+
+/* Chat App */
+.app {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+
 
 .logo {
   width: 100px;
-  align-self: center;
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
   border-radius: 12px;
 }
 
-/* 👤 Persona Selector */
-.persona-selector {
+.persona-tabs {
   display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
+  justify-content: space-around;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.persona-btn {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.85rem;
+.persona-tabs button {
+  border: none;
+  background-color: #F87070;
+  color: white;
+  font-weight: 500;
+  font-family: 'Nunito', sans-serif;
+  text-transform: lowercase;
   border-radius: 999px;
-  border: 2px solid #f88379;
-  background: white;
-  color: #f88379;
+  padding: 0.5rem 1rem;
   cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  text-align: center;
 }
 
-.persona-btn.selected {
-  background: #f88379;
-  color: white;
-}
-
-body.dark .persona-btn {
-  background: transparent;
-  border-color: #ff7675;
-  color: #ff7675;
-}
-
-body.dark .persona-btn.selected {
-  background: #ff7675;
-  color: white;
+.persona-tabs button.active {
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5);
 }
 
 .chat-box {
@@ -83,23 +224,18 @@ body.dark .persona-btn.selected {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding-bottom: 1rem;
-  max-height: 70vh;
+  padding: 1rem;
+  padding-bottom: 120px;
 }
+
 
 .bubble-row {
   display: flex;
   align-items: flex-end;
-  max-width: 100%;
 }
 
-.bubble-row.user {
-  justify-content: flex-end;
-}
-
-.bubble-row.ai {
-  justify-content: flex-start;
-}
+.bubble-row.user { justify-content: flex-end; }
+.bubble-row.ai { justify-content: flex-start; }
 
 .bubble {
   padding: 0.7rem 1rem;
@@ -108,19 +244,18 @@ body.dark .persona-btn.selected {
   border-radius: 1.3rem;
   max-width: 75%;
   word-wrap: break-word;
-  animation: slideFadeIn 0.3s ease-out;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: background 0.3s, color 0.3s;
+  font-family: 'Nunito', sans-serif;
 }
 
 .bubble.user {
-  background-color: #f88379;
+  background: linear-gradient(135deg, #F87070, #ffa8a8);
   color: white;
   border-bottom-right-radius: 0.3rem;
 }
 
 .bubble.ai {
-  background-color: #f5e8f7;
+  background: #f8f0ff;
   color: #3e2f41;
   border-bottom-left-radius: 0.3rem;
 }
@@ -131,32 +266,45 @@ body.dark .persona-btn.selected {
   font-style: italic;
 }
 
-form {
+/* Chat Input */
+form.initial-input,
+form.bottom-input {
   display: flex;
   gap: 0.5rem;
-  align-items: center;
-  padding-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 243, 245, 0.8); /* soft pink tint */
+  backdrop-filter: blur(10px);
+  position: sticky;
+  bottom: 65px;
+  z-index: 9;
+  width: 100%;
+  box-sizing: border-box;
+  border-top: none;
 }
 
-input[type="text"] {
+input[type="text"]#user-input {
   flex: 1;
   padding: 0.65rem 1rem;
-  border: 1.5px solid #f88379;
+  border: none;
   border-radius: 999px;
+  background: #fff1f3;
   font-size: 1rem;
-  background: #fff;
-  outline: none;
-  transition: background 0.3s ease;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: inset 0 0 0 1.5px #f3b5b5;
+  font-size: 1rem;
+  font-family: 'Nunito', sans-serif;
 }
 
 button {
   padding: 0.65rem 1.2rem;
-  background-color: #f88379;
+  font-size: 1rem;
+  background-color: #F87070;
   color: white;
-  font-weight: bold;
+  font-weight: 500;
   border: none;
-  border-radius: 999px;
+  border-radius: 2rem;
   cursor: pointer;
+  text-transform: lowercase;
   transition: background 0.2s ease;
 }
 
@@ -164,50 +312,42 @@ button:hover {
   background-color: #f56a63;
 }
 
+/* Dark Mode Toggle */
 .toggle-container {
   position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 99;
+  z-index: 10;
 }
 
 .switch {
   position: relative;
-  display: inline-block;
   width: 50px;
   height: 26px;
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+.switch input { opacity: 0; width: 0; height: 0; }
 
 .slider {
   position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  top: 0; left: 0; right: 0; bottom: 0;
   background-color: #ccc;
   border-radius: 34px;
-  transition: 0.4s;
+  cursor: pointer;
 }
 
 .slider:before {
-  position: absolute;
   content: "☀️";
+  position: absolute;
   height: 22px;
   width: 22px;
   left: 2px;
   bottom: 2px;
   background-color: white;
   border-radius: 50%;
-  text-align: center;
-  font-size: 14px;
-  line-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: 0.4s;
 }
 
@@ -219,63 +359,104 @@ input:checked + .slider:before {
   transform: translateX(24px);
   content: "🌙";
 }
-
-@keyframes slideFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+/* === Tab Bar & Views === */
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 65px;
+  background: #fff5f7;
+  border-top: 1px solid #f0c0c4;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 0 1rem;
+  z-index: 100;
+  box-shadow: 0 -2px 8px rgba(248, 112, 112, 0.1);
 }
 
-@keyframes loadFadeIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.tab-bar button {
+  background: none;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  color: #d77474;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-transform: lowercase;
+  cursor: pointer;
+  flex: 1;
 }
 
-/* 🌑 Dark Mode — flowy, elegant */
-body.dark {
-  background: radial-gradient(circle at bottom right, #1a0e2d 0%, #0b0b0c 100%);
-  color: #eee;
+.tab-bar button.active {
+  color: #F87070;
+  font-weight: 700;
 }
 
-body.dark .app {
-  background: rgba(28, 12, 24, 0.6);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+
+.tab-bar button img,
+.tab-bar button svg {
+  width: 20px;
+  height: 20px;
+  margin-bottom: 2px;
 }
 
-body.dark .bubble.user {
-  background-color: #ff7675;
-  color: white;
+
+.tab-bar button {
+  background: none;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  color: #999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-transform: lowercase;
+  cursor: pointer;
+  flex: 1;
 }
 
-body.dark .bubble.ai {
-  background-color: #2c2c2c;
-  color: #eee;
+.tab-bar button.active {
+  color: #F87070;
+  font-weight: 600;
 }
 
-body.dark .bubble.typing {
-  background-color: #3a3a3a;
-  color: #aaa;
+.tab-content {
+  width: 100%;
+  max-width: 480px;
+  margin: 5rem auto 6rem;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #444;
 }
 
-body.dark input[type="text"] {
-  background-color: #2b2b2b;
-  color: #eee;
-  border-color: #ff7675;
+.coming-soon {
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  color: #888;
+  font-weight: 500;
+  text-transform: lowercase;
+}
+.persona-sliders {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: #666;
 }
 
-body.dark button {
-  background-color: #ff7675;
+.persona-sliders label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: 'Nunito', sans-serif;
 }
 
-body.dark button:hover {
-  background-color: #ff6b6b;
+.persona-sliders input[type="checkbox"] {
+  transform: scale(1.1);
+  cursor: pointer;
 }

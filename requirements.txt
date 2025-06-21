@@ -1,6 +1,6 @@
 Flask
-openai
 Flask-Session
-python-dotenv
+Flask-Cors
 gunicorn
-flask-cors
+python-dotenv
+openai>=1.0.0

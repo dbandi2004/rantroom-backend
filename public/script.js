@@ -1,18 +1,63 @@
+// === Element References ===
+const welcomeScreen = document.getElementById("welcome-screen");
+const startBtn = document.getElementById("start-btn");
+const nicknameInput = document.getElementById("nickname");
+const consentCheckbox = document.getElementById("consent-checkbox");
+
+const ageScreen = document.getElementById("age-screen");
+const nicknameDisplay = document.getElementById("nickname-display");
+const ageButtons = document.querySelectorAll(".age-box");
+const ageNextBtn = document.getElementById("age-next-btn");
+
+const appDiv = document.getElementById("app");
 const chatBox = document.getElementById("chat-box");
 const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 
-let currentPersona = "chill"; // default persona
+const sliders = document.querySelectorAll(".persona-sliders input[type='checkbox']");
 
-// Handle persona selection
-document.querySelectorAll(".persona-btn").forEach((btn) => {
+let selectedAge = null;
+let hasSentFirstMessage = false;
+
+// === Welcome Screen Logic ===
+function checkWelcomeValidity() {
+  const nameFilled = nicknameInput.value.trim().length > 0;
+  const consentGiven = consentCheckbox.checked;
+  startBtn.disabled = !(nameFilled && consentGiven);
+}
+
+nicknameInput.addEventListener("input", checkWelcomeValidity);
+consentCheckbox.addEventListener("change", checkWelcomeValidity);
+
+startBtn.addEventListener("click", () => {
+  const name = nicknameInput.value.trim();
+  if (!name || !consentCheckbox.checked) return;
+
+  welcomeScreen.style.display = "none";
+  ageScreen.style.display = "block";
+  nicknameDisplay.textContent = name;
+});
+
+// === Age Screen Logic ===
+ageButtons.forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".persona-btn").forEach(b => b.classList.remove("selected"));
+    ageButtons.forEach(b => b.classList.remove("selected"));
     btn.classList.add("selected");
-    currentPersona = btn.dataset.persona;
+    selectedAge = btn.dataset.age;
+    ageNextBtn.disabled = false;
   });
 });
 
+ageNextBtn.addEventListener("click", () => {
+  ageScreen.style.display = "none";
+  appDiv.style.display = "flex";
+  document.querySelector(".tab-bar").style.display = "flex";
+
+  const name = nicknameInput.value.trim();
+  addMessage("ai", `hey ${name}! i'm here if you need to vent, rant, or just talk 💬`);
+});
+
+// === Chat Logic ===
 function addMessage(role, text) {
   const row = document.createElement("div");
   row.className = "bubble-row " + role;
@@ -26,6 +71,17 @@ function addMessage(role, text) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+function showTypingPersona(persona) {
+  const row = document.createElement("div");
+  row.className = "bubble-row ai typing";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble ai";
+  bubble.textContent = `${persona.charAt(0).toUpperCase() + persona.slice(1)} is typing…`;
+  row.appendChild(bubble);
+  chatBox.appendChild(row);
+  return row;
+}
+
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
   const message = input.value.trim();
@@ -34,47 +90,70 @@ form.addEventListener("submit", async (e) => {
   addMessage("user", message);
   input.value = "";
 
-  // Typing indicator
-  const typingRow = document.createElement("div");
-  typingRow.className = "bubble-row ai";
-  const typingBubble = document.createElement("div");
-  typingBubble.className = "bubble ai typing";
-  typingBubble.textContent = "Typing...";
-  typingRow.appendChild(typingBubble);
-  chatBox.appendChild(typingRow);
-  chatBox.scrollTop = chatBox.scrollHeight;
+  if (!hasSentFirstMessage) {
+    form.classList.remove("initial-input");
+    form.classList.add("bottom-input");
+    hasSentFirstMessage = true;
+  }
+
+  const enabledPersonas = Array.from(sliders)
+    .filter(slider => slider.checked)
+    .map(slider => slider.value);
+
+  if (enabledPersonas.length === 0) {
+    addMessage("ai", "⚠️ select at least one persona.");
+    return;
+  }
+
+  // Show "typing..." for each enabled persona
+  const typingNodes = enabledPersonas.map(showTypingPersona);
 
   try {
     const res = await fetch("https://rantroom-backend.onrender.com/ask", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ message, persona: currentPersona })
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message, enabled_personas: enabledPersonas })
     });
 
     const data = await res.json();
-    const reply = data.reply;
+    typingNodes.forEach(n => chatBox.removeChild(n));
 
-    chatBox.removeChild(typingRow);
-    addMessage("ai", reply || "⚠️ No reply received");
+    if (data.group_reply) {
+      const lines = data.group_reply.split("\n").filter(Boolean);
+      for (const line of lines) {
+        await new Promise(resolve => setTimeout(resolve, 600));
+        addMessage("ai", line.trim());
+      }
+    } else {
+      addMessage("ai", "⚠️ no reply received");
+    }
   } catch (err) {
-    console.error("Error fetching reply:", err);
-    chatBox.removeChild(typingRow);
-    addMessage("ai", "Oops, I couldn’t respond 😓");
+    console.error("error:", err);
+    typingNodes.forEach(n => chatBox.removeChild(n));
+    addMessage("ai", "oops, i couldn’t respond 😓");
   }
 });
 
-// Dark mode toggle
-if (localStorage.getItem("rantroom-theme") === "dark") {
-  document.body.classList.add("dark");
-  document.getElementById("toggle-dark").checked = true;
-}
+// === Bottom Tab Navigation ===
+const tabs = ["home", "discover", "room", "profile"];
 
-document.getElementById("toggle-dark").addEventListener("change", () => {
-  document.body.classList.toggle("dark");
-  localStorage.setItem(
-    "rantroom-theme",
-    document.body.classList.contains("dark") ? "dark" : "light"
-  );
+document.querySelectorAll(".tab-bar button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const selected = btn.dataset.tab;
+
+    document.querySelectorAll(".tab-bar button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    tabs.forEach(t => {
+      const div = document.getElementById(`tab-${t}`);
+      if (div) div.style.display = "none";
+    });
+    appDiv.style.display = "none";
+
+    if (selected === "home") {
+      appDiv.style.display = "flex";
+    } else {
+      document.getElementById(`tab-${selected}`).style.display = "block";
+    }
+  });
 });

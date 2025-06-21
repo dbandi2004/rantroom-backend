@@ -1,13 +1,9 @@
-from flask import Flask, request, jsonify, session
-from flask_session import Session
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import openai
 import os
 
 app = Flask(__name__)
-app.secret_key = "rantroom-secret"
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 CORS(app, supports_credentials=True)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -55,19 +51,20 @@ def chat():
     try:
         for persona_key in enabled_personas:
             prompt = PERSONAS.get(persona_key, PERSONAS["chill"])
-            history = [{"role": "system", "content": prompt}] + conversation_context
+            messages = [{"role": "system", "content": prompt}] + conversation_context
 
-            response = openai.ChatCompletion.create(
+            response = openai.chat.completions.create(
                 model="gpt-4",
-                messages=history,
+                messages=messages,
                 temperature=0.85,
                 max_tokens=300,
             )
+
             reply = response.choices[0].message.content.strip()
             formatted = f"{persona_key.capitalize()}: {reply}"
             all_replies.append(formatted)
 
-            # Add persona response to context for future ones
+            # Carry forward each AI's message for continuity
             conversation_context.append({"role": "assistant", "content": reply})
 
     except Exception as e:
