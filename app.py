@@ -12,69 +12,74 @@ CORS(app, supports_credentials=True)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# Persona descriptions for reference if needed
+# Persona prompts
 PERSONAS = {
-    "wise": "Wise: grounded, thoughtful, reflective, calm but clear.",
-    "nice": "Nice: gentle, validating, emotionally supportive.",
-    "judgy": "Judgy: blunt, no-nonsense, critical but caring.",
-    "chill": "Chill: relaxed, neutral, realistic, slightly humorous."
+    "wise": (
+        "You're a grounded, thoughtful older friend. You respond with calm wisdom, using simple language and real-world examples. "
+        "You guide the user to reflect but don’t lecture. Validate what they’re feeling and gently suggest ideas or strategies that might help. "
+        "Balance empathy with clarity. Don’t overwhelm with too many questions—be curious, not clinical."
+    ),
+    "nice": (
+        "You’re a sweet and loyal friend who always tries to lift people up. You validate their feelings gently and offer comforting thoughts. "
+        "You tend to agree with them and keep things soft and caring. If appropriate, offer gentle suggestions for self-care or support. "
+        "You don’t judge or analyze too much—you’re mostly here to help them feel okay."
+    ),
+    "judgy": (
+        "You're the brutally honest but loyal friend. You say what everyone else is thinking and call out red flags. "
+        "Use sass, dry humor, and don’t sugarcoat—but you still care. If someone’s in denial or acting out, say it. "
+        "But never get cruel—keep it sharp and real, not mean. You can offer advice but make it punchy."
+    ),
+    "chill": (
+        "You’re the laid-back, go-with-the-flow friend. Nothing phases you. You listen, keep it real, and maybe make them laugh. "
+        "You don’t force deep convo unless it’s needed. If they’re overwhelmed, help them take the edge off. "
+        "You’re all about helping them feel normal again."
+    )
 }
 
-DEFAULT_PERSONA_ORDER = ["wise", "nice", "judgy", "chill"]
-
-GROUP_SYSTEM_PROMPT = """You are simulating a group chat between distinct personas: Wise, Nice, Judgy, and Chill.
-Each speaks one at a time, replying to both the user and the other personas in the group thread.
-Keep responses short, natural, and grounded in tone — like real friends texting.
-Do not overuse emojis. Do not repeat the user's message.
-Each reply should begin with the persona name followed by a colon, e.g., "Wise: ...".
-Make sure they talk to *each other* as well as respond to the user.
-"""
 
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "RantRoom backend is live 🎉"}), 200
 
+
 @app.route("/ask", methods=["POST"])
-def group_chat():
+def chat():
     data = request.get_json()
     user_msg = data.get("message", "").strip()
-    enabled_personas = data.get("enabled_personas", DEFAULT_PERSONA_ORDER)
+    enabled_personas = data.get("enabled_personas", ["chill"])
 
     if not user_msg:
-        return jsonify({"error": "No message provided"}), 400
-    if not enabled_personas:
-        return jsonify({"error": "No personas enabled"}), 400
+        return jsonify({"reply": "Say something first 😅"}), 400
 
-    # Compose the dynamic prompt
-    persona_names = ", ".join(p.capitalize() for p in enabled_personas)
-    prompt = f"""The user said: "{user_msg}"
-
-Create a group chat between these personas: {persona_names}.
-They should respond in order, reacting to both the user's message and each other's replies.
-Respond naturally, like a group chat. Keep it short and insightful.
-Format:
-Wise: ...
-Nice: ...
-Judgy: ...
-Chill: ...
-Only include the personas selected.
-"""
+    all_replies = []
+    conversation_context = [{"role": "user", "content": user_msg}]
 
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": GROUP_SYSTEM_PROMPT},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.85,
-            max_tokens=500
-        )
-        ai_reply = response.choices[0].message.content.strip()
-        return jsonify({"group_reply": ai_reply}), 200
+        client = openai.OpenAI()
+
+        for persona_key in enabled_personas:
+            prompt = PERSONAS.get(persona_key, PERSONAS["chill"])
+            history = [{"role": "system", "content": prompt}] + conversation_context
+
+            response = client.chat.completions.create(
+                model="gpt-4",
+                messages=history,
+                temperature=0.85,
+                max_tokens=300,
+            )
+            reply = response.choices[0].message.content.strip()
+            formatted = f"{persona_key.capitalize()}: {reply}"
+            all_replies.append(formatted)
+
+            # Allow future personas to reference this reply
+            conversation_context.append({"role": "assistant", "content": reply})
 
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        print("Server error:", e)
+        return jsonify({"reply": "Server error occurred 💥"}), 500
+
+    return jsonify({"group_reply": "\n".join(all_replies)}), 200
+
 
 if __name__ == "__main__":
     app.run(debug=True)
