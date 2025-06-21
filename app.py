@@ -36,11 +36,9 @@ PERSONAS = {
     )
 }
 
-
 @app.route("/", methods=["GET"])
 def index():
     return jsonify({"message": "RantRoom backend is live 🎉"}), 200
-
 
 @app.route("/ask", methods=["POST"])
 def chat():
@@ -55,13 +53,11 @@ def chat():
     conversation_context = [{"role": "user", "content": user_msg}]
 
     try:
-        client = openai.OpenAI()
-
         for persona_key in enabled_personas:
             prompt = PERSONAS.get(persona_key, PERSONAS["chill"])
             history = [{"role": "system", "content": prompt}] + conversation_context
 
-            response = client.chat.completions.create(
+            response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=history,
                 temperature=0.85,
@@ -71,7 +67,7 @@ def chat():
             formatted = f"{persona_key.capitalize()}: {reply}"
             all_replies.append(formatted)
 
-            # Allow future personas to reference this reply
+            # Add persona response to context for future ones
             conversation_context.append({"role": "assistant", "content": reply})
 
     except Exception as e:
@@ -79,7 +75,6 @@ def chat():
         return jsonify({"reply": "Server error occurred 💥"}), 500
 
     return jsonify({"group_reply": "\n".join(all_replies)}), 200
-
 
 if __name__ == "__main__":
     app.run(debug=True)
