@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RantRoom 💬</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1.6" />
+  <link rel="stylesheet" href="style.css?v=1.7" />
 </head>
 <body>
 
@@ -38,18 +38,22 @@
   <!-- Main App (Home Tab) -->
   <div class="app" id="app" style="display: none;">
     <img src="logo.png" alt="RantRoom Logo" class="logo" />
-    <div class="persona-tabs">
-      <button class="active" data-persona="wise">🎓 wise</button>
-      <button data-persona="nice">💖 nice</button>
-      <button data-persona="judgy">👀 judgy</button>
-      <button data-persona="chill">🤖 chill</button>
+
+    <!-- Global Sliders -->
+    <div class="global-sliders">
+      <label for="honesty-range">Honesty:</label>
+      <input type="range" id="honesty-range" min="0" max="100" value="50" />
+      <div class="slider-labels">
+        <span>Sweet</span><span>Brutal</span>
+      </div>
+
+      <label for="maturity-range">Age Maturity:</label>
+      <input type="range" id="maturity-range" min="18" max="50" value="25" />
+      <div class="slider-labels">
+        <span>18</span><span>50</span>
+      </div>
     </div>
-    <div class="persona-sliders">
-      <label><input type="checkbox" value="wise" checked> wise</label>
-      <label><input type="checkbox" value="nice" checked> nice</label>
-      <label><input type="checkbox" value="judgy" checked> judgy</label>
-      <label><input type="checkbox" value="chill" checked> chill</label>
-    </div>
+
     <div id="chat-box" class="chat-box"></div>
     <form id="chat-form" class="initial-input">
       <input type="text" id="user-input" placeholder="say anything..." autocomplete="off" required />
@@ -76,6 +80,6 @@
     <button data-tab="profile">👤 profile</button>
   </div>
 
-  <script src="script.js?v=1.6"></script>
+  <script src="script.js?v=1.7"></script>
 </body>
 </html>

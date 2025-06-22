@@ -1,4 +1,3 @@
-// === Element References ===
 const welcomeScreen = document.getElementById("welcome-screen");
 const startBtn = document.getElementById("start-btn");
 const nicknameInput = document.getElementById("nickname");
@@ -14,12 +13,12 @@ const chatBox = document.getElementById("chat-box");
 const form = document.getElementById("chat-form");
 const input = document.getElementById("user-input");
 
-const sliders = document.querySelectorAll(".persona-sliders input[type='checkbox']");
+const honestySlider = document.getElementById("honesty-slider");
+const maturitySlider = document.getElementById("maturity-slider");
 
 let selectedAge = null;
 let hasSentFirstMessage = false;
 
-// === Welcome Screen Logic ===
 function checkWelcomeValidity() {
   const nameFilled = nicknameInput.value.trim().length > 0;
   const consentGiven = consentCheckbox.checked;
@@ -38,7 +37,6 @@ startBtn.addEventListener("click", () => {
   nicknameDisplay.textContent = name;
 });
 
-// === Age Screen Logic ===
 ageButtons.forEach(btn => {
   btn.addEventListener("click", () => {
     ageButtons.forEach(b => b.classList.remove("selected"));
@@ -57,7 +55,6 @@ ageNextBtn.addEventListener("click", () => {
   addMessage("ai", `hey ${name}! i'm here if you need to vent, rant, or just talk 💬`);
 });
 
-// === Chat Logic ===
 function addMessage(role, text) {
   const row = document.createElement("div");
   row.className = "bubble-row " + role;
@@ -71,12 +68,14 @@ function addMessage(role, text) {
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-function showTypingPersona(persona) {
+function showTypingBubble() {
   const row = document.createElement("div");
   row.className = "bubble-row ai typing";
+
   const bubble = document.createElement("div");
-  bubble.className = "bubble ai";
-  bubble.textContent = `${persona.charAt(0).toUpperCase() + persona.slice(1)} is typing…`;
+  bubble.className = "bubble ai typing";
+  bubble.textContent = `typing…`;
+
   row.appendChild(bubble);
   chatBox.appendChild(row);
   return row;
@@ -96,30 +95,29 @@ form.addEventListener("submit", async (e) => {
     hasSentFirstMessage = true;
   }
 
-  const enabledPersonas = Array.from(sliders)
-    .filter(slider => slider.checked)
-    .map(slider => slider.value);
+  const honesty = honestySlider.value;
+  const maturity = maturitySlider.value;
 
-  if (enabledPersonas.length === 0) {
-    addMessage("ai", "⚠️ select at least one persona.");
-    return;
-  }
-
-  // Show "typing..." for each enabled persona
-  const typingNodes = enabledPersonas.map(showTypingPersona);
+  const typingNode = showTypingBubble();
 
   try {
     const res = await fetch("https://rantroom-backend.onrender.com/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, enabled_personas: enabledPersonas })
+      body: JSON.stringify({
+        message,
+        sliders: {
+          honesty: parseInt(honesty),
+          maturity: parseInt(maturity)
+        }
+      })
     });
 
     const data = await res.json();
-    typingNodes.forEach(n => chatBox.removeChild(n));
+    chatBox.removeChild(typingNode);
 
-    if (data.group_reply) {
-      const lines = data.group_reply.split("\n").filter(Boolean);
+    if (data.reply) {
+      const lines = data.reply.split("\n").filter(Boolean);
       for (const line of lines) {
         await new Promise(resolve => setTimeout(resolve, 600));
         addMessage("ai", line.trim());
@@ -129,12 +127,11 @@ form.addEventListener("submit", async (e) => {
     }
   } catch (err) {
     console.error("error:", err);
-    typingNodes.forEach(n => chatBox.removeChild(n));
+    chatBox.removeChild(typingNode);
     addMessage("ai", "oops, i couldn’t respond 😓");
   }
 });
 
-// === Bottom Tab Navigation ===
 const tabs = ["home", "discover", "room", "profile"];
 
 document.querySelectorAll(".tab-bar button").forEach(btn => {
