@@ -46,7 +46,7 @@ def generate_dynamic_persona(brutality, maturity):
 def index():
     return jsonify({"message": "RantRoom backend is live 🎉"}), 200
 
-@app.route("/", methods=["POST"])
+@app.route("/ask", methods=["POST"])
 def chat():
     user_msg = request.json.get("message", "").strip()
     brutality = int(request.json.get("brutality", 50))
