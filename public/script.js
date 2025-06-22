@@ -1,10 +1,9 @@
 const welcomeScreen = document.getElementById("welcome-screen");
-const startBtn = document.getElementById("start-btn");
 const nicknameInput = document.getElementById("nickname");
 const consentCheckbox = document.getElementById("consent-checkbox");
+const startBtn = document.getElementById("start-btn");
 
 const ageScreen = document.getElementById("age-screen");
-const nicknameDisplay = document.getElementById("nickname-display");
 const ageButtons = document.querySelectorAll(".age-box");
 const ageNextBtn = document.getElementById("age-next-btn");
 
@@ -15,31 +14,28 @@ const input = document.getElementById("user-input");
 
 const honestySlider = document.getElementById("honesty-slider");
 const maturitySlider = document.getElementById("maturity-slider");
+const honestyValue = document.getElementById("honesty-value");
+const maturityValue = document.getElementById("maturity-value");
 
 let selectedAge = null;
 let hasSentFirstMessage = false;
 
-function checkWelcomeValidity() {
-  const nameFilled = nicknameInput.value.trim().length > 0;
-  const consentGiven = consentCheckbox.checked;
-  startBtn.disabled = !(nameFilled && consentGiven);
-}
-
-nicknameInput.addEventListener("input", checkWelcomeValidity);
-consentCheckbox.addEventListener("change", checkWelcomeValidity);
-
-startBtn.addEventListener("click", () => {
-  const name = nicknameInput.value.trim();
-  if (!name || !consentCheckbox.checked) return;
-
-  welcomeScreen.style.display = "none";
-  ageScreen.style.display = "block";
-  nicknameDisplay.textContent = name;
+nicknameInput.addEventListener("input", () => {
+  startBtn.disabled = !(nicknameInput.value.trim() && consentCheckbox.checked);
 });
 
-ageButtons.forEach(btn => {
+consentCheckbox.addEventListener("change", () => {
+  startBtn.disabled = !(nicknameInput.value.trim() && consentCheckbox.checked);
+});
+
+startBtn.addEventListener("click", () => {
+  welcomeScreen.style.display = "none";
+  ageScreen.style.display = "block";
+});
+
+ageButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
-    ageButtons.forEach(b => b.classList.remove("selected"));
+    ageButtons.forEach((b) => b.classList.remove("selected"));
     btn.classList.add("selected");
     selectedAge = btn.dataset.age;
     ageNextBtn.disabled = false;
@@ -50,36 +46,8 @@ ageNextBtn.addEventListener("click", () => {
   ageScreen.style.display = "none";
   appDiv.style.display = "flex";
   document.querySelector(".tab-bar").style.display = "flex";
-
-  const name = nicknameInput.value.trim();
-  addMessage("ai", `hey ${name}! i'm here if you need to vent, rant, or just talk 💬`);
+  addMessage("ai", `hey ${nicknameInput.value.trim()}! i'm here if you need to vent, rant, or just talk 💬`);
 });
-
-function addMessage(role, text) {
-  const row = document.createElement("div");
-  row.className = "bubble-row " + role;
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble " + role;
-  bubble.textContent = text;
-
-  row.appendChild(bubble);
-  chatBox.appendChild(row);
-  chatBox.scrollTop = chatBox.scrollHeight;
-}
-
-function showTypingBubble() {
-  const row = document.createElement("div");
-  row.className = "bubble-row ai typing";
-
-  const bubble = document.createElement("div");
-  bubble.className = "bubble ai typing";
-  bubble.textContent = `typing…`;
-
-  row.appendChild(bubble);
-  chatBox.appendChild(row);
-  return row;
-}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -95,62 +63,48 @@ form.addEventListener("submit", async (e) => {
     hasSentFirstMessage = true;
   }
 
-  const honesty = honestySlider.value;
+  const brutality = honestySlider.value;
   const maturity = maturitySlider.value;
 
-  const typingNode = showTypingBubble();
+  const typingBubble = document.createElement("div");
+  typingBubble.className = "bubble-row ai typing";
+  typingBubble.innerHTML = '<div class="bubble ai typing">typing...</div>';
+  chatBox.appendChild(typingBubble);
 
   try {
-    const res = await fetch("https://rantroom-backend.onrender.com/ask", {
+    const res = await fetch("/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        message,
-        sliders: {
-          honesty: parseInt(honesty),
-          maturity: parseInt(maturity)
-        }
-      })
+      body: JSON.stringify({ message, brutality, maturity })
     });
-
     const data = await res.json();
-    chatBox.removeChild(typingNode);
-
-    if (data.reply) {
-      const lines = data.reply.split("\n").filter(Boolean);
-      for (const line of lines) {
-        await new Promise(resolve => setTimeout(resolve, 600));
-        addMessage("ai", line.trim());
-      }
-    } else {
-      addMessage("ai", "⚠️ no reply received");
-    }
+    chatBox.removeChild(typingBubble);
+    addMessage("ai", data.reply || "no response 😶");
   } catch (err) {
-    console.error("error:", err);
-    chatBox.removeChild(typingNode);
-    addMessage("ai", "oops, i couldn’t respond 😓");
+    console.error(err);
+    chatBox.removeChild(typingBubble);
+    addMessage("ai", "⚠️ something went wrong");
   }
 });
 
-const tabs = ["home", "discover", "room", "profile"];
+function addMessage(role, text) {
+  const row = document.createElement("div");
+  row.className = "bubble-row " + role;
 
-document.querySelectorAll(".tab-bar button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const selected = btn.dataset.tab;
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + role;
+  bubble.textContent = text;
 
-    document.querySelectorAll(".tab-bar button").forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+  row.appendChild(bubble);
+  chatBox.appendChild(row);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
 
-    tabs.forEach(t => {
-      const div = document.getElementById(`tab-${t}`);
-      if (div) div.style.display = "none";
-    });
-    appDiv.style.display = "none";
+// Real-time update of slider values
+honestySlider.addEventListener("input", () => {
+  honestyValue.textContent = honestySlider.value;
+});
 
-    if (selected === "home") {
-      appDiv.style.display = "flex";
-    } else {
-      document.getElementById(`tab-${selected}`).style.display = "block";
-    }
-  });
+maturitySlider.addEventListener("input", () => {
+  maturityValue.textContent = maturitySlider.value;
 });

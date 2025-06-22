@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>RantRoom 💬</title>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;700&family=Nunito:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=1.7" />
+  <link rel="stylesheet" href="style.css?v=1.8" />
 </head>
 <body>
 
@@ -35,22 +35,21 @@
     <button id="age-next-btn" disabled class="age-next">keep going</button>
   </div>
 
-  <!-- Main App (Home Tab) -->
+  <!-- Main App -->
   <div class="app" id="app" style="display: none;">
     <img src="logo.png" alt="RantRoom Logo" class="logo" />
 
-    <!-- Global Sliders -->
-    <div class="global-sliders">
-      <label for="honesty-range">Honesty:</label>
-      <input type="range" id="honesty-range" min="0" max="100" value="50" />
-      <div class="slider-labels">
-        <span>Sweet</span><span>Brutal</span>
+    <!-- Honesty & Maturity Sliders -->
+    <div class="response-sliders">
+      <div class="slider-box">
+        <label for="honesty-slider">Honesty: <span id="honesty-value">5</span></label>
+        <input type="range" id="honesty-slider" min="0" max="10" value="5">
+        <div class="slider-labels"><span>Sweet</span><span>Brutal</span></div>
       </div>
-
-      <label for="maturity-range">Age Maturity:</label>
-      <input type="range" id="maturity-range" min="18" max="50" value="25" />
-      <div class="slider-labels">
-        <span>18</span><span>50</span>
+      <div class="slider-box">
+        <label for="maturity-slider">Age Maturity: <span id="maturity-value">25</span></label>
+        <input type="range" id="maturity-slider" min="18" max="50" value="25">
+        <div class="slider-labels"><span>18</span><span>50</span></div>
       </div>
     </div>
 
@@ -61,18 +60,7 @@
     </form>
   </div>
 
-  <!-- Tab Views -->
-  <div id="tab-discover" class="tab-content" style="display: none;">
-    <div class="coming-soon">🧭 discover is coming soon!</div>
-  </div>
-  <div id="tab-room" class="tab-content" style="display: none;">
-    <div class="coming-soon">🛏 your rant room is coming soon!</div>
-  </div>
-  <div id="tab-profile" class="tab-content" style="display: none;">
-    <div class="coming-soon">👤 profile is coming soon!</div>
-  </div>
-
-  <!-- Tab Navigation -->
+  <!-- Navigation Tabs -->
   <div class="tab-bar" style="display: none;">
     <button data-tab="discover">🧭 discover</button>
     <button class="active" data-tab="home">🏠 home</button>
@@ -80,6 +68,6 @@
     <button data-tab="profile">👤 profile</button>
   </div>
 
-  <script src="script.js?v=1.7"></script>
+  <script src="script.js?v=1.8"></script>
 </body>
 </html>
