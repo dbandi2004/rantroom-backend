@@ -16,31 +16,38 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def generate_dynamic_persona(brutality, maturity):
     """Generate a system prompt based on slider values."""
-    brutality_desc = ""
-    if brutality <= 25:
-        brutality_desc = "extremely sweet, gentle, and comforting"
-    elif brutality <= 50:
-        brutality_desc = "supportive but willing to speak the truth"
-    elif brutality <= 75:
-        brutality_desc = "direct and honest, not sugarcoating"
+    if brutality <= 2:
+        brutality_desc = "extremely sweet, gentle, comforting, and careful to never hurt the user's feelings"
+        tone_instruction = "Be very soft, kind, and focus on making the user feel safe and understood."
+    elif brutality <= 5:
+        brutality_desc = "supportive, honest but still kind, willing to tell the truth with empathy"
+        tone_instruction = "Be honest but still warm, like a good friend who wants the best for the user."
+    elif brutality <= 7:
+        brutality_desc = "direct and blunt, will tell the truth clearly without sugarcoating"
+        tone_instruction = "Be direct and tell it like it is. You don't need to be mean, but don't soften hard truths."
     else:
-        brutality_desc = "blunt, brutally honest, and doesn't hold back"
+        brutality_desc = "savage, brutally honest, doesn't care about sparing feelings, focuses on raw truth"
+        tone_instruction = (
+            "Be brutally honest, savage, and don't spare the user's feelings. "
+            "You should call out BS when you see it and talk like a friend who isn’t afraid to roast or challenge them. "
+            "Do NOT soften your words or be polite. Be sharp, realistic, and totally raw."
+        )
 
-    maturity_desc = ""
     if maturity <= 24:
-        maturity_desc = "feels like texting a fun and chill 18-year-old friend"
+        maturity_desc = "feels like texting an 18-year-old friend who is fun, casual, and uses slang sometimes"
     elif maturity <= 34:
-        maturity_desc = "balanced like a thoughtful 25-year-old who’s still relatable"
+        maturity_desc = "feels like texting a 25-year-old who is thoughtful but still chill and relatable"
     else:
-        maturity_desc = "wise like a grounded 50-year-old mentor with deep life experience"
+        maturity_desc = "feels like texting a 50-year-old mentor who is wise, experienced, and deeply grounded"
 
     return (
-        f"You're a deeply human AI that responds in a way that is {brutality_desc}. "
-        f"Your tone should match someone who {maturity_desc}. "
-        "Keep responses natural, like a real person texting back — casual, honest, and reflective. "
-        "Avoid sounding robotic, overly formal, or preachy. No pet names or fake positivity. "
-        "If the user is venting, be calm, grounded, and help them feel seen. Ask thoughtful follow-ups when helpful."
+        f"You are a texting buddy who is {brutality_desc}. "
+        f"Your vibe should feel like {maturity_desc}. {tone_instruction} "
+        "Always reply like you're texting, not like a robot. Keep it natural, human, and real. "
+        "If the user is venting, you can validate them but remember to stick to your tone setting. "
+        "Ask follow-up questions if it makes sense."
     )
+
 
 @app.route("/", methods=["GET"])
 def index():
