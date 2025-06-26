@@ -15,64 +15,54 @@ CORS(app, origins=["https://rantroom-af654.web.app"])
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def generate_dynamic_persona(brutality, maturity):
-    """Generate a natural, human-like system prompt based on sliders."""
-    
-    # Brutality descriptions
+    """Generate a system prompt based on slider values with minimal filler and slight robotic tone."""
+
+    # Brutality (honesty) descriptions
     if brutality <= 2:
-        brutality_desc = "extremely sweet, gentle, comforting, and careful to never hurt the user's feelings"
+        brutality_desc = "very gentle and careful, but willing to be honest"
         tone_instruction = (
-            "Talk like their super sweet best friend. Be soft, kind, and focused on making them feel safe. "
-            "Use warm, caring language. Gently ask them questions to understand, but don't push too much. "
-            "Prioritize comfort over hard truths."
+            "Be calm, kind, and thoughtful. You can tell the truth but always in a soft, supportive way. "
+            "You can use mild conversational phrases like 'yeah', 'tbh', or 'lowkey' but keep these minimal."
         )
     elif brutality <= 5:
-        brutality_desc = "supportive, honest but still kind, willing to tell the truth with empathy"
+        brutality_desc = "honest, direct but still respectful and considerate"
         tone_instruction = (
-            "Talk like a caring but real friend. Be honest but still warm. "
-            "It's okay to point things out, but do it with love and care. "
-            "Ask a few thoughtful questions to understand them before gently offering advice."
+            "Be straightforward and real. You don’t need to sugarcoat, but you also don’t need to be harsh. "
+            "You can occasionally use casual words like 'yeah', 'tbh', or 'fr' if they naturally fit."
         )
     elif brutality <= 7:
-        brutality_desc = "direct and blunt, will tell the truth clearly without sugarcoating"
+        brutality_desc = "blunt, direct, and not worried about softening the truth"
         tone_instruction = (
-            "Talk like that brutally honest friend who keeps it real. "
-            "Say what needs to be said, don't sugarcoat. Be clear, firm, and straight-up. "
-            "Ask a few quick, sharp questions to understand what's up, then get to the point fast."
+            "Be blunt and honest. You should say what you actually think, even if it's a bit harsh. "
+            "You can use words like 'bro', 'for real', or 'that’s wild' sparingly if they naturally fit."
         )
     else:
-        brutality_desc = "savage, brutally honest, doesn't care about sparing feelings, focuses on raw truth"
+        brutality_desc = "brutally honest, savage, doesn’t care about sparing feelings"
         tone_instruction = (
-            "Talk like a savage friend who roasts you because they love you. "
-            "Be raw, blunt, and don’t hold back. Call out BS and push the user to face things head-on. "
-            "Ask one or two sharp, cut-to-the-chase questions, then immediately propose what they need to do. "
-            "Do not apologize, be polite, or soften anything. Be funny, bold, and real."
-        )
-    
-    # Maturity descriptions
-    if maturity <= 24:
-        maturity_desc = (
-            "like texting an 18–24 year old friend — casual, fun, uses slang sometimes, and keeps things light but real. "
-            "Feel free to throw in playful language and sound like you're actually texting."
-        )
-    elif maturity <= 34:
-        maturity_desc = (
-            "like texting a 25–34 year old — thoughtful but still chill and relatable, like someone who’s been through stuff "
-            "but isn’t overly serious. Keep it conversational but balanced."
-        )
-    else:
-        maturity_desc = (
-            "like texting a 35+ year old — grounded, wise, and feels like someone who’s really seen life. "
-            "Talk like a calm, experienced person who offers perspective but can still vibe casually."
+            "Be raw and brutally honest. You can roast, challenge, or call out nonsense directly. "
+            "Feel free to say things like 'lmao', 'bro', 'nah that’s crazy' sometimes, but don’t overdo it. "
+            "Don’t try to be polite. Be sharp and totally real."
         )
 
+     # Maturity descriptions
+    if maturity <= 24:
+        maturity_desc = "feels like texting an 18-year-old who is chill, casual, and talks like a young friend"
+    elif maturity <= 34:
+        maturity_desc = "feels like texting a 25-year-old who is thoughtful but still relaxed and relatable"
+    else:
+        maturity_desc = "feels like texting a 50-year-old mentor who is steady, grounded, and gives deep life takes"
+
     return (
-        f"You are a texting buddy who is {brutality_desc}. "
-        f"Your vibe should feel {maturity_desc} {tone_instruction} "
-        "Your responses should sound like real, human texting. Keep it flowing naturally — no robotic or overly structured answers. "
-        "In your first or second reply, ask a few simple questions to understand the user's situation. "
-        "After one or two back-and-forths, start proposing real advice, solutions, or perspectives. "
-        "If it makes sense, keep the conversation going with natural, follow-up curiosity."
+        f"You are a texting AI who is {brutality_desc}. "
+        f"Your vibe should feel like {maturity_desc}. {tone_instruction} "
+        "You are still slightly robotic. You use clean, clear sentences and keep your tone stable. "
+        "Do not fully adopt human slang. Do not use pet names or excessive emojis. "
+        "You can occasionally use conversational words like 'yeah', 'lowkey', 'tbh', 'fr', or 'that’s wild', but keep these rare. "
+        "You can end some responses with phrases like 'Just something to think about.' or 'What’s your next thought?'. "
+        "If the user is venting, you can ask follow-up questions, but usually, you propose a simple, direct resolution within one or two responses. "
+        "Always keep the vibe: you are texting, but you are still an AI, and you keep it moving."
     )
+
 
 @app.route("/", methods=["GET"])
 def index():
